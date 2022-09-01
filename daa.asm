@@ -6,14 +6,15 @@
 ; 0 1 1   11
 ; 1 0 0   02
 ; 1 0 1   12
-; 1 1 0   11
+; 1 1 0   03
 ; 1 1 1   13
 ;
 ; F       H x x N C
 
         ORG     50000
 
-        LD      A,2             ; upper screen
+        LD      A,2             ; 2 for upper screen
+                                ; 3 for printer
         CALL    5633            ; open channel
 
         LD      HL,TABLE        ; point to flags table
@@ -44,12 +45,12 @@ LOOP2:  LD      E,(HL)          ; LOAD "F" from table
         RET
 
 ; Flag table
-TABLE:  DEFB    00, $10, $01, $11, $02, $12, $11, $13
+TABLE:  DEFB    00, $10, $01, $11, $02, $12, $03, $13
 
 ; =============================
 ; DAA wrapper
 ; =============================
-DAATEST: 
+DAATEST:
         PUSH    HL
         PUSH    BC
         PUSH    DE
@@ -99,7 +100,7 @@ PRINT:  PUSH    AF
         BIT     1,E
         JR      Z,ISZERO1
         INC     A		; "1"
-ISZERO1: 
+ISZERO1:
         RST     $10
 
         ; PRINT C FLAG
@@ -117,7 +118,7 @@ ISZERO1:
         BIT     0,E
         JR      Z,ISZERO2
         INC     A               ; "1"
-ISZERO2: 
+ISZERO2:
         RST     $10
 
         LD      A,$20           ; " "
@@ -134,7 +135,7 @@ ISZERO2:
         BIT     4,E
         JR      Z,ISZERO3
         INC     A		; "1"
-ISZERO3: 
+ISZERO3:
         RST     $10
 
         LD      A,$20           ; " "
@@ -179,10 +180,9 @@ PRINTHEXA:
         CP      10
         JR      C,ISDIGIT
         LD      E,$37           ; "A" - 10
-ISDIGIT: 
+ISDIGIT:
         ADD    A,E
         RST     $10
 
         POP     DE
         RET
-
